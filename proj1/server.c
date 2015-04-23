@@ -23,9 +23,9 @@
 #include <string.h>
 #include <unistd.h>
 
-#define MAXLINE 4096 /*max text line length*/
-#define SERV_PORT 3000 /*port*/
-#define LISTENQ 8 /*maximum number of client connections*/
+#define MAXLINE 4096 // Tamanho máximo da linha do texto
+#define SERV_PORT 3000 // Porta
+#define LISTENQ 8 // Número máximo de conexões de clientes
 
 char banco[9][255];
 char buf[MAXLINE];
@@ -43,22 +43,21 @@ int main (int argc, char **argv)
     socklen_t clilen;
     struct sockaddr_in cliaddr, servaddr;
 
-    //Create a socket for the soclet
-    //If sockfd<0 there was an error in the creation of the socket
-    if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) <0) {
-        perror("Problem in creating the socket");
+    // Criação do socket
+    if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+        perror("Problema na criação do socket.");
         exit(2);
     }
 
-    //preparation of the socket address
+    // Preparação do endereço do socket
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     servaddr.sin_port = htons(SERV_PORT);
 
-    //bind the socket
+    // Vincular o socket
     bind(listenfd, (struct sockaddr *) &servaddr, sizeof(servaddr));
 
-    //listen to the socket by creating a connection queue, then wait for clients
+    // listen to the socket by creating a connection queue, then wait for clients
     listen(listenfd, LISTENQ);
 
     printf("%s\n","Server running...waiting for connections.");
@@ -180,10 +179,8 @@ void list(char *params) {
         int index = strtol(&params[i], NULL, 10);
         strcat(ret, banco[index]);
         strcat(ret, "\t");
-        // printf("%s\t", banco[index]);
     }
     strcat(ret, "\n");
-    // printf("\n");
 }
 
 /*
@@ -204,23 +201,24 @@ void filter(char *params) {
                 int index = strtol(&params[i], NULL, 10);
                 strcat(ret, banco[index]);
                 strcat(ret, "\t");
-                // printf("%s\t", banco[index]);
             }
             strcat(ret, "\n");
-            // printf("\n");
         }
     } else if (campo == 3) { // Filtro pela sinopse
-        if (strstr(banco[3], &params[4]) != NULL) { // FIXME: Não tá funfando porque no &params[4] não traz apenas a string, mas também o que vem depois.
-			printf("%s", &params[4]);
-            int indexInitial = 8;
-            for (int i = indexInitial; i < (strtol(&params[6], NULL, 10) * 2) + indexInitial; i += 2) {
+        char genero[255];
+        int index = 0;
+        int indexParam = 4;
+        while (params[indexParam] != ' ') {
+            genero[index++] = params[indexParam++];    
+        }
+        if (strstr(banco[3], genero) != NULL) {
+            int indexInitial = indexParam + 3;
+            for (int i = indexInitial; i < (strtol(&params[indexParam + 1], NULL, 10) * 2) + indexInitial; i += 2) {
                 int index = strtol(&params[i], NULL, 10);
                 strcat(ret, banco[index]);
                 strcat(ret, "\t");
-                // printf("%s\t", banco[index]);
             }
             strcat(ret, "\n");
-            // printf("\n");
         }
     }
 }
