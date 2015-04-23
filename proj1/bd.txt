@@ -1,0 +1,5 @@
+ID	Título	Ano de lançamento	Gênero	Duração (min)	Sinopse	Diretor	Elenco	Número de exemplares em estoque
+1	Titanic	1997	Drama, Romance	194	A seventeen-year-old aristocrat, expecting to be married to a rich claimant by her mother, falls in love with a kind but poor artist aboard the luxurious, ill-fated R.M.S. Titanic	James Cameron	Leonardo DiCaprio, Kate Winslet, Billy Zane	10
+2	Avatar	2009	Action, Adventure, Fantasy	162	A Paraplegic Marine dispatched to the moon Pandora on a unique mission becomes torn between following his orders and protecting the world he feels is his home.	James Cameron	Sam Worthington, Zoe Saldana, Sigourney Weaver	179
+3	Iron Man	2008	Action, Adventure, Sci-Fi	126	After being held captive in an Afghan cave, an industrialist creates a unique weaponized suit of armor to fight against evil. This leads him to conflict within his own company.	Jon Favreau	Robert Downey Jr., Gwyneth Paltrow, Terrence Howard	15
+4	Forrest Gump	1994	Drama, Romance	142	Forrest Gump, while not intelligent, has accidentally been present at many historic moments, but his true love, Jenny Curran, eludes him.	Robert Zemeckis	Tom Hanks, Robin Wright, Gary Sinise	10
