@@ -11,6 +11,8 @@
 
 #define RESULTS_FILE "results.txt"
 
+#define PRINTS_ON 1 // 1 para printar o menu, 0 para desliga-lo
+
 void getCurrentTime (int* seconds, int* microSeconds)
 {
 	/* Guarda em seconds e microSeconds os tempos decorridos em segundos e microsegundos desde o Epoch 1970-01-01 00:00:00 UTC */
@@ -69,26 +71,59 @@ int main(int argc, char **argv)
 	// TODO: Requisitar uma lista de serviços disponíveis noservidor, e imprimi-la
 	// Solicita ao usuário que entre com a requisição
 	// TODO: modificar opções do menu para letras
-	printf("Selecione uma opção: \n\n");
-	printf("0 - Listar filmes \n");
-	printf("1 - Buscar filme \n");
-	printf("2 - Editar filme \n");
-	printf("9 - Sair \n");
+	if (PRINTS_ON == 1) {
+		printf("Selecione uma opção: \n\n");
+		printf("0 - Listar todos os títulos dos filmes e o ano de lançamento \n");
+		printf("1 - Listar todas as informações de todos os filmes \n");
+		printf("2 - Listar todos os títulos dos filmes e o ano de lançamento de um gênero determinado \n");
+		printf("3 - Dado o identificador de um filme, retornar a sinopse do filme \n");
+		printf("4 - Dado o identificador de um filme, retornar todas as informações deste filme \n");
+		printf("5 - Dado o identificador de um filme, retornar o número de exemplares em estoque \n");
+		printf("6 - Alterar o número de exemplares em estoque (apenas cliente locadora) \n");
+		printf("9 - Sair \n");
+	}
 
 	scanf("%d", &menuOption);
+	// Prepara a requisição a ser enviada ao servidor de acordo com a opção selecionada
 	switch (menuOption){
 		case 0:
-			printf("Opção 0 - 'Listar filmes' selecionada.\n");
-
+			if (PRINTS_ON == 1)
+				printf("Opção 0 - 'Listar todos os títulos dos filmes e o ano de lançamento' selecionada.\n");
+			sprintf(sendline, "0 2 1 2\n"); // Listar todos os títulos dos filmes e o ano de lançamento.
 			break;
 		case 1:
-			printf("Opção 1 - 'Buscar filme' selecionada.\n");
+			if (PRINTS_ON == 1)
+				printf("Opção 1 - 'Listar todas as informações de todos os filmes' selecionada.\n");
+			sprintf(sendline, "0 9 0 1 2 3 4 5 6 7 8"); // Listar todas as informações de todos os filmes.
 			break;
 		case 2:
-			printf("Opção 2 - 'Editar filme' selecionada.\n");
+			if (PRINTS_ON == 1)
+				printf("Opção 2 - 'Listar todos os títulos dos filmes e o ano de lançamento de um gênero determinado' selecionada.\n");
+			sprintf(sendline, "1 3 Drama 2 1 2"); // Listar todos os títulos dos filmes e o ano de lançamento de um gênero determinado.
+			break;
+		case 3:
+			if (PRINTS_ON == 1)
+				printf("Opção 3 - 'Dado o identificador de um filme, retornar a sinopse do filme' selecionada.\n");
+			sprintf(sendline, "1 0 2 1 5"); // Dado o identificador de um filme, retornar a sinopse do filme.
+			break;
+		case 4:
+			if (PRINTS_ON == 1)
+				printf("Opção 4 - 'Dado o identificador de um filme, retornar todas as informações deste filme' selecionada.\n");
+			sprintf(sendline, "1 0 2 9 0 1 2 3 4 5 6 7 8"); // Dado o identificador de um filme, retornar todas as informações deste filme.
+			break;
+		case 5:
+			if (PRINTS_ON == 1)
+				printf("Opção 5 - 'Dado o identificador de um filme, retornar o número de exemplares em estoque' selecionada.\n");
+			sprintf(sendline, "1 0 2 1 8"); // Dado o identificador de um filme, retornar o número de exemplares em estoque.
+			break;
+		case 6:
+			if (PRINTS_ON == 1)
+				printf("Opção 6 - 'Alterar o número de exemplares em estoque (apenas cliente locadora)' selecionada.\n");
+			sprintf(sendline, "2 3 15"); // Alterar o número de exemplares em estoque (apenas cliente locadora)
 			break;
 		case 9:
-			printf("Opção 9 - 'Sair' selecionada.\n");
+			if (PRINTS_ON == 1)
+				printf("Opção 9 - 'Sair' selecionada.\n");
 			return 0;
 		default:
 			printf("Erro: %d selecionado. Essa opção não existe!\n", menuOption);
@@ -107,9 +142,6 @@ int main(int argc, char **argv)
         return 4;
         printf("Problema na conexão com o servidor.");
     }
-
-	// Prepara a requisição a ser enviada ao servidor 
-	sprintf(sendline, "0 2 1 2\n"); // Listar todos os títulos dos filmes e o ano de lançamento.
 
 	// Envia a requisição ao servidor
 	send(sockfd, sendline, strlen(sendline), 0);
