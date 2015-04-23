@@ -3,9 +3,8 @@
 #include <string.h> // memset()
 // TODO: checar se realmente não é necessário importar #include <sys/time.h>
 
-#define PROTOCOL_FMLY AF_INET // família de protocolo (AF_INET: IPv4) // TODO: trocar AF_INET
-#define SOCK_TYPE SOCK_STREAM // tipo de socket (stream) // TODO
-
+#define PROTOCOL_FMLY AF_INET // família de protocolo (AF_INET: IPv4)
+#define SOCK_TYPE SOCK_STREAM // tipo de socket (stream)
 #define SERV_PORT 3000 // porta do servidor // TODO trocar para outra porta
 #define MAX_LINE 4096 // tamaho máximo de uma linha
 
@@ -56,15 +55,15 @@ int main(int argc, char **argv)
 
 	// TODO: checar se argumento recebido é um endereço de IP
 
-	// Cria o socket (AF_INET: IPv4; SOCK_STREAM: stream socket)
-	if ((sockfd = socket (AF_INET, SOCK_STREAM, 0)) <0) { // se sockfd retornar negativo, houve um erro
+	// Cria o socket
+	if ((sockfd = socket (PROTOCOL_FMLY, SOCK_TYPE, 0)) <0) { // se sockfd retornar negativo, houve um erro
         printf("Problema na criação do socket. sockfd retornou %d.\n", sockfd);
         return 2;
     }
 
-	// Inicializa o servaddr
+	// Prepara o endereço do socket
 	memset(&servaddr, 0, sizeof(servaddr));
-    servaddr.sin_family = AF_INET; // seta família de protocolo
+    servaddr.sin_family = PROTOCOL_FMLY; // seta família de protocolo
     servaddr.sin_addr.s_addr= inet_addr(argv[1]); // seta endereço do host na Internet. inet_addr converte do formato padrão para binário
     servaddr.sin_port = htons(SERV_PORT);	// seta a porta. htons converte para Big Endian
 
@@ -147,7 +146,7 @@ int main(int argc, char **argv)
 	send(sockfd, sendline, strlen(sendline), 0);
 
 	// Recebe a mensagem do socket
-	if (recv(sockfd, recvline, MAX_LINE, 0) == 0){ // se recv retornar 0, ocorreu na recepção
+	if (recv(sockfd, recvline, MAX_LINE, 0) == 0){ // se recv retornar 0, ocorreu erro na recepção
         printf("O servidor terminou prematuramente");
         return 5;
     }
