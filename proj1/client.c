@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <netinet/in.h> // sockaddr_in
 #include <string.h> // memset()
-// TODO: checar se realmente não é necessário importar #include <sys/time.h>
 
 #define PROTOCOL_FMLY AF_INET // família de protocolo (AF_INET: IPv4)
 #define SOCK_TYPE SOCK_STREAM // tipo de socket (stream)
-#define SERV_PORT 3000 // porta do servidor // TODO trocar para outra porta
+#define SERV_PORT 4000 // porta do servidor
 #define MAX_LINE 4096 // tamaho máximo de uma linha
 
 #define RESULTS_FILE "results.txt"
@@ -26,7 +25,7 @@ void saveConnectionTimes (int startMS, int endMS)
 {
 	/* Salva a diferença entre startMS e endMS (ambos em microsegundos) no arquivo RESULTS_FILE */
 	FILE *rFile;
-    rFile = fopen(RESULTS_FILE,"w");
+    rFile = fopen(RESULTS_FILE,"a");
 	if (rFile == NULL) {
 		perror("Error opening file");
 	} else {
@@ -162,7 +161,7 @@ int main(int argc, char **argv)
 	printf("Diference: %d\n", endTimeInMicroSeconds - startTimeInMicroSeconds);
 
 	// Salva os tempos de conexão
-	saveConnectionTimes(endTimeInMicroSeconds, startTimeInMicroSeconds);
+	saveConnectionTimes(startTimeInMicroSeconds, endTimeInMicroSeconds);
 
     return 0;
 }

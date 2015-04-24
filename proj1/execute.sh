@@ -2,7 +2,7 @@
 # ELEMENTS = 7
 
 echo "Compiling server..."
-gcc server.c -o server -std=c99
+gcc serverV2.c -o serverV2 -std=c99
 
 for i in `seq 1 7`;do
 	echo "Compiling client$i..."

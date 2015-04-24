@@ -22,7 +22,7 @@
 
 #define PROTOCOL_FMLY AF_INET // família de protocolo (AF_INET: IPv4)
 #define SOCK_TYPE SOCK_STREAM // tipo de socket (stream)
-#define SERV_PORT 3000 // porta do servidor // TODO trocar para outra porta
+#define SERV_PORT 4000 // porta do servidor
 #define LISTENQ 8 // Número máximo de conexões de clientes
 #define MAX_LINE 4096 // tamaho máximo de uma linha
 
