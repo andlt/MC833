@@ -1,5 +1,5 @@
 /*
-- Campos: 
+- Identificadores dos Campos: 
     0 - ID
     1 - Título
     2 - Ano de lançamento
@@ -9,12 +9,11 @@
     6 - Diretor
     7 - Elenco
     8 - Número de exemplares em estoque
-- Funções:
+- Identificadores das Funções:
     0 - List;
     1 - Filter;
     2 - Edit;
 */
-
 
 #include <stdio.h>
 #include <netinet/in.h> // sockaddr_in
@@ -30,34 +29,52 @@ char dataBase[9][255];
 char strBuffer[MAX_LINE];
 char resp[MAX_LINE];
 
-/*
-- Listar todos os títulos dos filmes e o ano de lançamento;
-- Listar todas as informações de todos os filmes;
-Parâmetros: 0 [quantidade de parâmetros seguintes] [sequência de campos a serem exibidos]
-*/
+/*       Função: list(char *params)
+ *    Descrição: Lista os campos passados pelo parâmetro "params" (que chega através de códigos).
+ *      Entrada: params (char *) - String com os parâmetros a serem utilizados no método. Esses parâmetros seguem o seguinte formato:
+ *               0 [quantidade de parâmetros seguintes] [sequência de campos a serem exibidos]
+ *               Ex: 0 2 1 2, onde:
+ *               - 0 - Função list a ser executada;
+ *               - 2 - Dois campos que serão listados;
+ *               - 1 - Campo "Título" que será listado;
+ *               - 2 - Campo "Ano de lançamento" que será listado.
+ *        Saída: (void)
+ * Casos de uso: - Listar todos os títulos dos filmes e o ano de lançamento;
+ *               - Listar todas as informações de todos os filmes.
+ */
 void list(char *params) {
     int indexInitial = 4;
 	int i;
-    for (i = indexInitial; i < (strtol(&params[2], NULL, 10) * 2) + indexInitial; i += 2) {
-        int index = strtol(&params[i], NULL, 10);
-        strcat(resp, dataBase[index]);
+    for (i = indexInitial; i < (strtol(&params[2], NULL, 10) * 2) + indexInitial; i += 2) { // Percorre os campos a serem listados.
+        int index = strtol(&params[i], NULL, 10); // Pega o índice do campo a ser listado.
+        strcat(resp, dataBase[index]); // Concatena na resposta da requisição o campo.
         strcat(resp, "\t");
     }
     strcat(resp, "\n");
 }
 
-/*
-- Listar todos os títulos dos filmes e o ano de lançamento de um gênero determinado;
-- Dado o identificador de um filme, retornar a sinopse do filme;
-- Dado o identificador de um filme, retornar todas as informações deste filme;
-- Dado o identificador de um filme, retornar o número de exemplares em estoque;
-Parâmetros: 1 [campo a ser filtrado (ID/Gênero)] [valor do campo a ser filtrado] [quantidade de parâmetros seguintes] [sequência de campos a serem exibidos]
-*/
+/*       Função: filter(char *params)
+ *    Descrição: Lista os campos passados pelo parâmetro "params" (que chega através de códigos), filtrados por um dos seguintes campos: ID ou Gênero.
+ *      Entrada: params (char *) - String com os parâmetros a serem utilizados no método. Esses parâmetros seguem o seguinte formato:
+ *               1 [campo a ser filtrado (ID/Gênero)] [valor do campo a ser filtrado] [quantidade de parâmetros seguintes] [sequência de campos a serem exibidos]
+ *               Ex: 1 3 Drama 2 1 2, onde:
+ *               - 1 - Função filter a ser executada;
+ *               - 3 - Será filtrado pelo campo com identificador 3, ou seja, "Gênero";
+ *               - Drama - Valor do campo "Gênero" que será usado na filtragem;
+ *               - 2 - Dois campos que serão listados;
+ *               - 1 - Campo "Título" que será listado;
+ *               - 2 - Campo "Ano de lançamento" que será listado.
+ *        Saída: (void)
+ * Casos de uso: - Listar todos os títulos dos filmes e o ano de lançamento de um gênero determinado;
+ *               - Dado o identificador de um filme, retornar a sinopse do filme;
+ *               - Dado o identificador de um filme, retornar todas as informações deste filme;
+ *               - Dado o identificador de um filme, retornar o número de exemplares em estoque;
+ */
 void filter(char *params) {
     int campo = strtol(&params[2], NULL, 10);
     if (campo == 0) { // Filtro pelo ID
-        int filmIdParam = strtol(&params[4], NULL, 10);
-        int dbFilmId = strtol(dataBase[0], NULL, 10);
+        int filmIdParam = strtol(&params[4], NULL, 10); // Pega o ID do filme passado por parâmetro
+        int dbFilmId = strtol(dataBase[0], NULL, 10); // Pega o ID do filme do banco
         if (filmIdParam == dbFilmId) {
             int indexInitial = 8;
 			int i;
@@ -72,8 +89,8 @@ void filter(char *params) {
         char genero[255];
         int index = 0;
         int indexParam = 4;
-        while (params[indexParam] != ' ') {
-            genero[index++] = params[indexParam++];    
+        while (params[indexParam] != ' ') { // Vai montando a string com o gênero a ser filtrado
+            genero[index++] = params[indexParam++];
         }
         if (strstr(dataBase[3], genero) != NULL) {
             int indexInitial = indexParam + 3;
@@ -88,10 +105,18 @@ void filter(char *params) {
     }
 }
 
-/*
-- Alterar o número de exemplares em estoque (apenas cliente locadora);
-Parâmetros: 2 [ID a ser alterado] [nova quantidade de exemplares em estoque]
-*/
+/*       Função: edit(char *params, FILE * newFile)
+ *    Descrição: Edita o número de exemplares em estoque de um determinado filme.
+ *      Entrada: params (char *) - String com os parâmetros a serem utilizados no método. Esses parâmetros seguem o seguinte formato:
+ *               2 [ID a ser alterado] [nova quantidade de exemplares em estoque]
+ *               Ex: 2 3 15, onde:
+ *               - 2 - Função edit a ser executada;
+ *               - 3 - Identificador do filme a ser editado;
+ *               - 15 - Novo valor do campo "número de exemplares em estoque".
+ *               newFile (FILE *) - arquivo auxiliar onde serão escritos os novos valores, e depois substituirá o arquivo original.
+ *        Saída: (void)
+ * Casos de uso: - Alterar o número de exemplares em estoque (apenas cliente locadora).
+ */
 void edit(char *params, FILE * newFile) {
     int filmIdParam = strtol(&params[2], NULL, 10);
     int dbFilmId = strtol(dataBase[0], NULL, 10);
@@ -127,29 +152,29 @@ void process(char *params)
         char c;
         int field = 0;
         int text = 0;
-        int gambi = 0;
+        int firstLine = 0;
 
-		// Abre o arquivo do dataBase e cria um novo
+		// Abre o arquivo do dataBase e cria um novo que será auxiliar caso seja feita a operação de edição.
         pFile = fopen("db.txt","r");
         newFile = fopen("db2.txt","w");
 
-		// TODO comment
+		// Caso seja uma edição, será escrito um novo arquivo, então coloca o cabeçalho dos campos nele.
         if (strcmp(&params[0], "2") == 0)
             fprintf(newFile, "ID\tTítulo\tAno de lançamento\tGênero\tDuração (min)\tSinopse\tDiretor\tElenco\tNúmero de exemplares em estoque\n");
 
-		// TODO comment
         if (pFile == NULL) {
-            perror("Error opening file");
+            perror("Erro ao abrir o arquivo");
         } else {
             do {
                 c = fgetc(pFile);
-                if (gambi == 0) {
-                    if (c == '\n') gambi++;
-                } else if (c == '\t') {
+                if (firstLine == 0) { // Ignora a primeira linha, que é o cabeçalho do banco.
+                    if (c == '\n') firstLine++;
+                } else if (c == '\t') { // Tabulação indica que terminou um campo e virá o próximo.
                     text = 0;
                     field++;
-                } else if (c == '\n') {
+                } else if (c == '\n') { // Quebra de linha indica que terminou um registro e virá o próximo.
 
+                    // Nesse ponto já tem um registro a ser analisado, então realiza a função desejada sobre ele.
                     if (strcmp(&params[0], "0") == 0) {
                         list(params);
                     } else if (strcmp(&params[0], "1") == 0) {
@@ -162,9 +187,9 @@ void process(char *params)
 
                     field = 0;
                     text = 0;
-                    memset(dataBase, 0, sizeof dataBase);
+                    memset(dataBase, 0, sizeof dataBase); // Após realizar a função, limpa a variável local com o registro, para armazenar o próximo.
                 } else {
-                    dataBase[field][text] = c;
+                    dataBase[field][text] = c; // Vai concatenando o próximo caracter do campo.
                     text++;
                 }
             } while (c != EOF);
@@ -172,6 +197,8 @@ void process(char *params)
             fclose(newFile);
         }
 
+        // Caso a função realizada tenha sido a de edição, então um novo arquivo foi criado.
+        // Este está com os valores atualizados, então este substitui o antigo.
         if (strcmp(&params[0], "2") == 0) {
             rename("db2.txt", "db.txt");
             strcat(resp, "Número de exemplares alterado com sucesso.\n");
