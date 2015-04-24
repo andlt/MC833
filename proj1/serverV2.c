@@ -187,7 +187,7 @@ int main (int argc, char **argv)
 	int recvCode = -1; // código de retorno da recv()
     struct sockaddr_in servaddr; // estrutura para endereço (IPv4)
     struct sockaddr_in cliaddr; // estrutura para endereço (IPv4)
-    socklen_t clilen; // tamamnho do endereço cli // TODO CLI?
+    socklen_t clilen; // tamamnho do endereço cli
 	int connfd; // TODO inicializar
     pid_t childpid; // IDs dos processos filhos
 
