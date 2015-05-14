@@ -36,32 +36,19 @@ void saveConnectionTimes (int startMS, int endMS)
 	}
 }
 
-void dg_cli (FILE *fp, int sockfd, const struct sockaddr * pservaddr, socklen_t servlen)
-{
-	int n;
-	char sendline[MAX_LINE], recvline[MAX_LINE + 1];
-	
-	while (fgets(sendline, MAX_LINE, fp) != NULL) {
-		sendto(sockfd, sendline, strlen(sendline), 0, pservaddr, servlen);
-		n = recvfrom(sockfd, recvline, MAX_LINE, 0, NULL, NULL);
-		recvline[n] = 0;	// null terminate
-		fputs(recvline, stdout);
-	}
-}
-
 int main(int argc, char **argv)
 {
 	/*/* A função deve ser chamada recebendo o IP do servidor como argumento */
 
 	int sockfd = -1; // código de retorno da criação do socket
     struct sockaddr_in servaddr; // estrutura para endereço (IPv4)
-	/*struct timeval *tv;
+	struct timeval *tv;
 	int startTimeInSeconds; // TODO: inicializar tempos com -1
 	int startTimeInMicroSeconds;
 	int endTimeInSeconds;
 	int endTimeInMicroSeconds;
     char sendline[MAX_LINE], recvline[MAX_LINE];
-	int menuOption = -1;*/
+	int menuOption = -1;
 
 	if (argc != 2) { // confere se recebemos extamente 1 argumento
 		printf("Número de argumentos incorreto. %d argumentos recebidos.\n", argc-1);
@@ -86,7 +73,7 @@ int main(int argc, char **argv)
     servaddr.sin_port = htons(SERV_PORT);	// seta a porta. htons converte para Big Endian
 	inet_pton(PROTOCOL_FMLY, argv[1], &servaddr.sin_addr);
 
-	/*// TODO: Requisitar uma lista de serviços disponíveis noservidor, e imprimi-la
+	// TODO: Requisitar uma lista de serviços disponíveis noservidor, e imprimi-la
 	// Solicita ao usuário que entre com a requisição
 	// TODO: modificar opções do menu para letras
 	if (PRINTS_ON == 1) {
@@ -155,19 +142,11 @@ int main(int argc, char **argv)
 	// printf("StartTime: %d, %d\n", startTimeInSeconds, startTimeInMicroSeconds);
 	// getCurrentTime(&startTimeInSeconds, &startTimeInMicroSeconds);*/
 
-	dg_cli(stdin, sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr));
-
-	/*// Conecta o cliente ao socket
-    if (connect(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr)) < 0) { // se o conect retornar negativo, ocorreu erro na conexão
-        return 4;
-        printf("Problema na conexão com o servidor.");
-    }
-
 	// Envia a requisição ao servidor
-	send(sockfd, sendline, strlen(sendline), 0);
+	sendto(sockfd, sendline, strlen(sendline), 0, (struct sockaddr *) &servaddr, sizeof(servaddr));
 
 	// Recebe a mensagem do socket
-	if (recv(sockfd, recvline, MAX_LINE, 0) == 0){ // se recv retornar 0, ocorreu erro na recepção
+	if (recvfrom(sockfd, recvline, MAX_LINE, 0, NULL, NULL) == 0){ // se recv retornar 0, ocorreu erro na recepção
         printf("O servidor terminou prematuramente");
         return 5;
     }
@@ -183,7 +162,7 @@ int main(int argc, char **argv)
 	printf("Diference: %d\n", endTimeInMicroSeconds - startTimeInMicroSeconds);
 
 	// Salva os tempos de conexão
-	saveConnectionTimes(startTimeInMicroSeconds, endTimeInMicroSeconds);*/
+	saveConnectionTimes(startTimeInMicroSeconds, endTimeInMicroSeconds);
 
     return 0;
 }

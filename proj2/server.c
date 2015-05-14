@@ -210,31 +210,14 @@ void process(char *params)
     }
 }
 
-void dg_echo(int sockfd, struct sockaddr * pcliaddr, socklen_t clilen)
-{
-	int n;
-	socklen_t len;
-	char mesg[MAX_LINE];
-
-	for ( ; ; ) {
-		len = clilen;
-		n = recvfrom(sockfd, mesg, MAX_LINE, 0, pcliaddr, &len);
-
-		printf("%s", mesg);
-
-		sendto(sockfd, mesg, n, 0, pcliaddr, len);
-	}
-}
-
 int main (int argc, char **argv)
 {
 	int sockfd = -1; // código de retorno da criação do socket
 	/*int recvCode = -1; // código de retorno da recv() */
     struct sockaddr_in servaddr; // estrutura para endereço (IPv4)
     struct sockaddr_in cliaddr; // estrutura para endereço (IPv4)
-    /*socklen_t clilen; // tamamnho do endereço cli
-	int connfd; // TODO inicializar
-    pid_t childpid; // IDs dos processos filhos*/
+    socklen_t clilen; // tamamnho do endereço cli
+	int n;
 
 	// Zera o buffer
 	bzero(&servaddr, sizeof(servaddr));
@@ -254,51 +237,25 @@ int main (int argc, char **argv)
     // Vincula o socket
     bind(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr));
 
-	dg_echo(sockfd, (struct sockaddr *) &cliaddr, sizeof(cliaddr));
-
-	/*// Ouve o socket criando uma fila de conexão e esperando por clientes
-	listen(sockfd, LISTENQ);
+	// Ouve o socket criando uma fila de conexão e esperando por clientes
     printf("%s\n","Servidor rodando. Esperando conexões.");
 
 	for ( ; ; ) { // loop infinito (enquanto o servidor estiver rodando)
 
 		clilen = sizeof(cliaddr);
+		n = recvfrom(sockfd, strBuffer, MAX_LINE, 0, (struct sockaddr *) &cliaddr, &clilen);
 
-        // Aceita uma conexão
-        connfd = accept(sockfd, (struct sockaddr *) &cliaddr, &clilen);
+		// Lê os parâmetros
+        printf("String recebida do cliente: %s\n", strBuffer);
+        char *params = strtok(strBuffer, " ");
 
-        printf("%s\n","Request recebido...");
+		// Processa a requisição do cliente
+        process(params);
 
-		// Cria filhos para lidar com cada processos
-		if ( (childpid = fork ()) == 0 ) { // 0: filho
-
-			printf ("Filho criado para receber request\n");
-
-			close (sockfd); // fecha o socket
-
-			// Recebe a mensagem da conexão
-			while ( (recvCode = recv(connfd, strBuffer, MAX_LINE, 0)) > 0)  {
-
-				// Lê os parâmetros
-                printf("String recebida do cliente: %s\n", strBuffer);
-                char *params = strtok(strBuffer, " ");
-
-				// Processa a requisição do cliente
-                process(params);
-
-				// Envia a resposta ao cliente
-                send(connfd, resp, strlen(resp), 0);
-            }
-
-            if (recvCode < 0) {
-            	printf("Erro de leitura\n");
-			}
-            return 0;
-		}
-
-		// Fecha o socket do servidor
-        close(connfd);		
-	}*/
+		// Envia a resposta ao cliente
+		sendto(sockfd, resp, strlen(resp), 0, (struct sockaddr *) &cliaddr, sizeof(cliaddr));
+      
+	}
 
 	return 0;
 }
