@@ -1,40 +1,33 @@
 CC=gcc
-CFLAGS= -Wall -lm
-DEBUGFLAGS= -g -O0 -fno-inline
+CFLAGS= -Wall -lm -std=c99
+DEBUGFLAGS= -g -O0 -fno-inline -std=c99
 OPTFLAGS= -O2
 
-client: clean
+#client: clean
 client: COMPILER=$(CC)
 client: CFLAGS += $(OPTFLAGS)
-client: client
+client: client1
 
-client-debug: clean
+#client-debug: clean
 client-debug: COMPILER=$(CC)
 client-debug: CFLAGS += $(DEBUGFLAGS)
-client-debug: client
+client-debug: client1
 
-client: client.o
-	$(COMPILER) $(CFLAGS) -o client client.o
-
-client.o: 
+client1: client.o
 	$(COMPILER) $(CFLAGS) -o client.o -c client.c
 
-server: clean
+#server: clean
 server: COMPILER=$(CC)
 server: CFLAGS += $(OPTFLAGS)
-server: server
+server: server1
 
-server-debug: clean
+#server-debug: clean
 server-debug: COMPILER=$(CC)
 server-debug: CFLAGS += $(DEBUGFLAGS)
-server-debug: server
+server-debug: server1
 
-server: server.o
-	$(COMPILER) $(CFLAGS) -o server server.o
-
-server.o: 
+server1: server.o
 	$(COMPILER) $(CFLAGS) -o server.o -c server.c
 
-
-clean: 
-	rm -rf *.o
+#clean: 
+#	rm -rf *.o
