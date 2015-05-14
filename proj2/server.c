@@ -60,6 +60,8 @@ int main (int argc, char **argv)
     // Vincula o socket
     bind(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr));
 
+	dg_echo(sockfd, (struct sockaddr *) &cliaddr, sizeof(cliaddr));
+
     // listen to the socket by creating a connection queue, then wait for clients
     /*listen(sockfd, LISTENQ);
 
@@ -96,6 +98,20 @@ int main (int argc, char **argv)
         //close socket of the server
         close(connfd);
     }*/
+}
+
+void dg_echo(int sockfd, (struct sockaddr *) pcliaddr, socklen_t clien)
+{
+	int n;
+	socklen_t len;
+	char mesg[MAXLINE];
+
+	for ( ; ; ) {
+		len = clilen;
+		n = recvfrom(sockfd, mesg, MAXLINE, 0, pcliaddr, &len);
+
+		sendto(sockfd, mesg, n, 0, pcliaddr, len);
+	}
 }
 
 void process(char *params){
