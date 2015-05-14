@@ -29,7 +29,7 @@
 
 char dataBase[9][255];
 char strBuffer[MAX_LINE];
-char resp[MAX_LINE];
+char *resp;
 
 /*       Função: list(char *params)
  *    Descrição: Lista os campos passados pelo parâmetro "params" (que chega através de códigos).
@@ -49,6 +49,7 @@ void list(char *params) {
 	int i;
     for (i = indexInitial; i < (strtol(&params[2], NULL, 10) * 2) + indexInitial; i += 2) { // Percorre os campos a serem listados.
         int index = strtol(&params[i], NULL, 10); // Pega o índice do campo a ser listado.
+        resp = realloc(resp, sizeof(dataBase[index]));
         strcat(resp, dataBase[index]); // Concatena na resposta da requisição o campo.
         strcat(resp, "\t");
     }
@@ -82,9 +83,11 @@ void filter(char *params) {
 			int i;
             for (i = indexInitial; i < (strtol(&params[6], NULL, 10) * 2) + indexInitial; i += 2) {
                 int index = strtol(&params[i], NULL, 10);
+                resp = realloc(resp, sizeof(dataBase[index]));
                 strcat(resp, dataBase[index]);
                 strcat(resp, "\t");
             }
+            resp = realloc(resp, sizeof("\n"));
             strcat(resp, "\n");
         }
     } else if (campo == 3) { // Filtro pela sinopse
@@ -99,9 +102,11 @@ void filter(char *params) {
 			int i;
             for (i = indexInitial; i < (strtol(&params[indexParam + 1], NULL, 10) * 2) + indexInitial; i += 2) {
                 int index = strtol(&params[i], NULL, 10);
+                resp = realloc(resp, sizeof(dataBase[index]));
                 strcat(resp, dataBase[index]);
                 strcat(resp, "\t");
             }
+            resp = realloc(resp, sizeof("\n"));
             strcat(resp, "\n");
         }
     }
@@ -233,6 +238,7 @@ int main (int argc, char **argv)
     servaddr.sin_family = PROTOCOL_FMLY; // seta família de protocolo
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY); // seta endereço do host na Internet
     servaddr.sin_port = htons(SERV_PORT);	// seta a porta. htons converte para Big Endian
+    resp = (char*)malloc(sizeof(char));
 
     // Vincula o socket
     bind(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr));
