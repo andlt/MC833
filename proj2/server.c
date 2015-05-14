@@ -229,7 +229,7 @@ int main (int argc, char **argv)
     }
 
 	// Prepara o endereço do socket
-	/*memset(&servaddr, 0, sizeof(servaddr));*/
+	memset(&servaddr, 0, sizeof(servaddr));
     servaddr.sin_family = PROTOCOL_FMLY; // seta família de protocolo
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY); // seta endereço do host na Internet
     servaddr.sin_port = htons(SERV_PORT);	// seta a porta. htons converte para Big Endian
@@ -254,6 +254,9 @@ int main (int argc, char **argv)
 
 		// Envia a resposta ao cliente
 		sendto(sockfd, resp, strlen(resp), 0, (struct sockaddr *) &cliaddr, sizeof(cliaddr));
+
+		// Limpa a resposta
+		memset(resp, 0, sizeof(resp));
       
 	}
 
