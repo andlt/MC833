@@ -3,24 +3,21 @@ package proj3;
 import java.rmi.Naming;
 import java.rmi.registry.LocateRegistry;
 
+/* Classe que implementa o servidor do sistema, que provê os serviços de FimSystem para o cliente */
 public class FilmSystemServer {
 	public static void main(String[] args) {
 
-		// You may want a SecurityManager for downloading of classes:
-		// System.setSecurityManager(new RMISecurityManager());
-
 		try {
-			// Create an instance of the server object
+			// Instancia o objeto com as funções providas
 			FilmSystemImpl im = new FilmSystemImpl();
 
-			System.out.println("DateServer starting...");
+			System.out.println("Inicializando servidor...");
 
-			LocateRegistry.createRegistry(1099);
-			// Publish it in the RMI registry.
-			// Of course you have to have rmiregistry or equivalent running!
-			Naming.rebind(FilmSystem.LOOKUPNAME, im);
+			// Coloca o serviço no registro de objetos do RMI
+			LocateRegistry.createRegistry(1099); // 1099 é a porta padrão
+			Naming.rebind(FilmSystem.LOOKUPNAME, im); // modifica o nome para aquele acordado na interface
 
-			System.out.println("DateServer ready.");
+			System.out.println("Servidor pronto.");
 		} catch (Exception e) {
 			System.err.println(e);
 			System.exit(1);

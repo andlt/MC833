@@ -9,13 +9,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
+/* Classe que implementa os serviços que o servidor provê para o cliente */
 public class FilmSystemImpl extends UnicastRemoteObject implements FilmSystem {
 
 	private static final long serialVersionUID = 4357486579370675619L;
 
-	/**
-	 * Consultas SQL para as operações desejadas.
-	 */
+	/* Consultas SQL para as possíveis operações. */
 //	Opção 0 - 'Listar todos os títulos dos filmes e o ano de lançamento'
 	private static String SQL_0 = "SELECT titulo, anoLancamento FROM filme;";
 
@@ -38,21 +37,20 @@ public class FilmSystemImpl extends UnicastRemoteObject implements FilmSystem {
 	private static String SQL_6 = "UPDATE filme SET numExemplares = @NEW_NUM_EXEMPLARES@ WHERE id = @ID@;";
 	private static String SQL_6_VIEW = "SELECT numExemplares FROM filme WHERE id = @ID@;";
 
-	/** Construct the object that implements the remote server.
-	 * Called from main, after it has the SecurityManager in place.
-	 */
+	// Construtor
 	public FilmSystemImpl() throws RemoteException {
-		super();	// sets up networking
+		super();
 	}
 
+	// Recebe a opção do cliente e os parâmetros, retorna  o resultado desejado
 	public String getFilmes(Integer option, List<String> params) throws java.rmi.RemoteException {
 		String ret = "";
 		Connection conn = null;
         try {
         	// Faz a conexão com o banco de dados local.
         	Class.forName("org.postgresql.Driver");
-        	String url = "jdbc:postgresql://localhost:5433/mc833";
-        	conn = DriverManager.getConnection(url,"postgres", "postgres");
+        	String url = "jdbc:postgresql://localhost:5433/mc833"; // porta do banco
+        	conn = DriverManager.getConnection(url,"postgres", "postgres"); // usuário e senha
 
             Statement st = conn.createStatement();
             ResultSet rs = null;
@@ -86,6 +84,7 @@ public class FilmSystemImpl extends UnicastRemoteObject implements FilmSystem {
 					break;
 			}
 
+            // Prepara a resposta
             if (option >= 0 && option <= 6) {
 	            while (rs.next()) {
 	            	try {
@@ -118,7 +117,7 @@ public class FilmSystemImpl extends UnicastRemoteObject implements FilmSystem {
 	            	ret += "\n";
 	            }
             }
-            // Fecha as conexões.
+            // Fecha as conexões com o banco.
             rs.close();
             st.close();
         } catch (ClassNotFoundException e) {
