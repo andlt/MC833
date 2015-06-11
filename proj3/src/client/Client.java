@@ -1,38 +1,22 @@
 package client;
 
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.net.Socket;
+import java.rmi.Naming;
 
-import constants.Constans;
+import server.Server;
 
-public class Client {
-
-	public static void main(String[] args) {
-		Socket MyClient;
-	    try {
-           MyClient = new Socket("Machine name", Constans.PORT_NUMBER);
-	           
-           System.out.println("Client Running!");
-			
-		    DataInputStream input;
-		    input = new DataInputStream(MyClient.getInputStream());
-		    
-		    PrintStream output;
-		    output = new PrintStream(serviceSocket.getOutputStream());
-		    
-		    output.close();
-		    input.close();
-		    MyClient.close();
-
-	    }
-	    catch (IOException e) {
-	        System.out.println(e);
-	    }
-		
-	    
-
-	}
-	
+public class Client { 
+	static String message = "blank"; 
+	// The Hello object "obj" is the identifier that is 
+	// the Hello interface. 
+	static Server obj = null; 
+	public static void main(String args[]) { 
+		try { 
+			obj = (Server)Naming.lookup("//" + "127.0.0.1" + "/Hello"); 
+			message = obj.Hello(); 
+			System.out.println("Mensagem no servidor RMI de: \"" + message + "\""); 
+		} catch (Exception e) { 
+			System.out.println("HelloClient exception: " + e.getMessage()); 
+			e.printStackTrace(); 
+		} 
+	} 
 }
