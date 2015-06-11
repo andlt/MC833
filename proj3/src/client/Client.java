@@ -2,6 +2,7 @@ package client;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.Socket;
 
 import constants.Constans;
@@ -16,17 +17,21 @@ public class Client {
            System.out.println("Client Running!");
 			
 		    DataInputStream input;
-		    try {
-		    	input = new DataInputStream(MyClient.getInputStream());
-		    }
-		    catch (IOException e) {
-		       System.out.println(e);
-		    }
+		    input = new DataInputStream(MyClient.getInputStream());
+		    
+		    PrintStream output;
+		    output = new PrintStream(serviceSocket.getOutputStream());
+		    
+		    output.close();
+		    input.close();
+		    MyClient.close();
+
 	    }
 	    catch (IOException e) {
 	        System.out.println(e);
 	    }
 		
+	    
 
 	}
 	

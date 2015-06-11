@@ -12,6 +12,15 @@ public class Server {
 	    ServerSocket MyService;
 	    try {
 	    	MyService = new ServerSocket(Constans.PORT_NUMBER);
+	    	
+	    	PrintStream output;
+	        output = new PrintStream(serviceSocket.getOutputStream());
+	        
+	        output.close();
+	        input.close();
+	        serviceSocket.close();
+	        MyService.close();
+	    	
 	    }
 	    catch (IOException e) {
 	    	System.out.println(e);
