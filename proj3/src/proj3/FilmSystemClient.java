@@ -1,20 +1,20 @@
 package proj3;
 
-import java.io.IOException;
 import java.rmi.Naming;
-import java.util.Date;
 import java.util.Scanner;
 
 /* A very simple client for the RemoteDate service. */
-public class DateClient {
+public class FilmSystemClient {
 
 	/** The local proxy for the service. */
-	protected static RemoteDate netConn = null;
+	protected static FilmSystem netConn = null;
 
 	public static void main(String[] args) {
 		
-		System.out.println("Número de repetições desejadas:");
+		System.out.println("Opção:");
 		Scanner scanner = new Scanner(System.in);  
+		int options = scanner.nextInt();
+		System.out.println("Número de repetições desejadas:");
 		int repetitions = scanner.nextInt();
 		scanner.close();
 		
@@ -23,11 +23,11 @@ public class DateClient {
 		for(int i = 0; i < repetitions; i++) {
 			try {
 				long startTime = System.nanoTime();
-				netConn = (RemoteDate)Naming.lookup(RemoteDate.LOOKUPNAME);
-				Date today = netConn.getRemoteDate();
+				netConn = (FilmSystem)Naming.lookup(FilmSystem.LOOKUPNAME);
+				String ret = netConn.getFilmes(options, null);
 				long estimatedTime = System.nanoTime() - startTime;
-				System.out.println(today.toString());
-				System.out.println("Time elapsed: "+estimatedTime/*/1000000*/);
+//				System.out.println(ret);
+				System.out.println(estimatedTime/*/1000000*/);
 			} catch (Exception e) {
 				System.err.println("RemoteDate exception: " + e.getMessage());
 				e.printStackTrace();
